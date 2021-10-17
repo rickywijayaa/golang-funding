@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	env "funding/env"
 	"funding/user"
 	"log"
@@ -16,11 +15,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	var users []user.User
-	db.Find(&users)
-
-	for _, user := range users {
-		fmt.Println(user.Name)
+	userRepository := user.NewRepository(db)
+	user := user.User{
+		Name: "Test",
 	}
 
+	userRepository.Save(user)
 }
