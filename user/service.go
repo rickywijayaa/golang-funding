@@ -5,7 +5,6 @@ import "golang.org/x/crypto/bcrypt"
 type Service interface {
 	RegisterUser(input RegisterInput) (User, error)
 }
-
 type service struct {
 	repository Repository
 }
