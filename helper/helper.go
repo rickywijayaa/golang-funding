@@ -6,9 +6,9 @@ type Response struct {
 }
 
 type Meta struct {
-	Message string
-	Code    int
-	Success string
+	Message string `json:"message"`
+	Code    int    `json:"code"`
+	Success string `json:"success"`
 }
 
 func APIResponse(message string, code int, success string, data interface{}) Response {
