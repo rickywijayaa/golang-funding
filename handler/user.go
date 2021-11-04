@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"funding/helper"
 	"funding/user"
 	"net/http"
 
@@ -29,5 +30,10 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, helper.APIResponse(
+		"Your account has been created",
+		http.StatusOK,
+		"success",
+		user,
+	))
 }
