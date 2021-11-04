@@ -21,13 +21,21 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed Created User",
+			http.StatusBadRequest,
+		))
+		return
 	}
 
 	newUser, err := h.service.RegisterUser(input)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed Created User",
+			http.StatusBadRequest,
+		))
+		return
 	}
 
 	formatter := user.UserFormat(newUser, "token")

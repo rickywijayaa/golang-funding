@@ -25,3 +25,18 @@ func APIResponse(message string, code int, success string, data interface{}) Res
 
 	return jsonResponse
 }
+
+func APIFailedResponse(message string, code int) Response {
+	meta := Meta{
+		Message: message,
+		Code:    code,
+		Success: "failed",
+	}
+
+	jsonResponse := Response{
+		Meta: meta,
+		Data: nil,
+	}
+
+	return jsonResponse
+}
