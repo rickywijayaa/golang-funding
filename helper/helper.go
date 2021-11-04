@@ -26,7 +26,7 @@ func APIResponse(message string, code int, success string, data interface{}) Res
 	return jsonResponse
 }
 
-func APIFailedResponse(message string, code int) Response {
+func APIFailedResponse(message string, code int, data interface{}) Response {
 	meta := Meta{
 		Message: message,
 		Code:    code,
@@ -35,7 +35,7 @@ func APIFailedResponse(message string, code int) Response {
 
 	jsonResponse := Response{
 		Meta: meta,
-		Data: nil,
+		Data: data,
 	}
 
 	return jsonResponse

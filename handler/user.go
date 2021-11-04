@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type userHandler struct {
@@ -21,9 +22,17 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
-			"Failed Created User",
-			http.StatusBadRequest,
+		var errors []string
+		for _, e := range err.(validator.ValidationErrors) {
+			errors = append(errors, e.Error())
+		}
+
+		errorMessage := gin.H{"errors": errors}
+
+		c.JSON(http.StatusUnprocessableEntity, helper.APIFailedResponse(
+			"Failed To Created Account",
+			http.StatusUnprocessableEntity,
+			errorMessage,
 		))
 		return
 	}
@@ -32,8 +41,9 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
-			"Failed Created User",
+			"Failed To Created Account",
 			http.StatusBadRequest,
+			nil,
 		))
 		return
 	}
