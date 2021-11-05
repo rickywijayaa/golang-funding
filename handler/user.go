@@ -52,3 +52,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		formatter,
 	))
 }
+
+func (h *userHandler) Login(c gin.Context) {
+
+}

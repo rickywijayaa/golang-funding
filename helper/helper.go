@@ -50,7 +50,7 @@ func APIFailedResponse(message string, code int, data interface{}) Response {
 func FormatValidationError(err error) []string {
 	var errors []string
 	for _, e := range err.(validator.ValidationErrors) {
-		errors = append(errors, fmt.Sprintf("Error on field %v , condition is %v", e.Field(), e.ActualTag()))
+		errors = append(errors, fmt.Sprintf("Field %v is %v", e.Field(), e.ActualTag()))
 	}
 
 	return errors
