@@ -4,6 +4,7 @@ import (
 	"funding/helper"
 	"funding/user"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -109,6 +110,7 @@ func (h *userHandler) IsEmailExist(c *gin.Context) {
 			http.StatusBadRequest,
 			gin.H{"errors": "Internal Server Error"},
 		))
+		return
 	}
 
 	data := gin.H{
@@ -124,5 +126,51 @@ func (h *userHandler) IsEmailExist(c *gin.Context) {
 		metaMessage,
 		http.StatusOK,
 		data,
+	))
+}
+
+func (h *userHandler) UploadAvatar(c *gin.Context) {
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed to upload avatar image",
+			http.StatusBadRequest,
+			gin.H{"is_uploaded": false},
+		))
+		return
+	}
+
+	path := "images"
+	_, err = os.Stat(path)
+	if os.IsNotExist(err) {
+		os.Mkdir(path, os.ModePerm)
+	}
+
+	path += "/" + file.Filename
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed to upload avatar image",
+			http.StatusBadRequest,
+			gin.H{"is_uploaded": false},
+		))
+		return
+	}
+
+	userID := 1
+	_, err = h.service.SaveAvatar(userID, path)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed to upload avatar image",
+			http.StatusBadRequest,
+			gin.H{"is_uploaded": false},
+		))
+		return
+	}
+
+	c.JSON(http.StatusOK, helper.APIResponse(
+		"Success Upload Avatar",
+		http.StatusOK,
+		gin.H{"is_uploaded": true},
 	))
 }
