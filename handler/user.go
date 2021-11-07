@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"funding/helper"
 	"funding/user"
 	"net/http"
@@ -140,13 +141,15 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
+	userID := 1
+
 	path := "images"
 	_, err = os.Stat(path)
 	if os.IsNotExist(err) {
 		os.Mkdir(path, os.ModePerm)
 	}
 
-	path += "/" + file.Filename
+	path = fmt.Sprintf("images/%d-%s", userID, file.Filename)
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
@@ -157,7 +160,6 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	userID := 1
 	_, err = h.service.SaveAvatar(userID, path)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
