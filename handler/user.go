@@ -22,7 +22,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
+		errorMessage := helper.ErrorMessageResponse(errors)
 
 		c.JSON(http.StatusUnprocessableEntity, helper.APIFailedResponse(
 			"Failed To Created Account",
@@ -33,12 +33,11 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	}
 
 	newUser, err := h.service.RegisterUser(input)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
 			"Failed To Created Account",
 			http.StatusBadRequest,
-			nil,
+			gin.H{"errors": err.Error()},
 		))
 		return
 	}
@@ -48,7 +47,6 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"Your account has been created",
 		http.StatusOK,
-		"success",
 		formatter,
 	))
 }
@@ -59,21 +57,21 @@ func (h *userHandler) Login(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
+		errorMessage := helper.ErrorMessageResponse(errors)
 
 		c.JSON(http.StatusUnprocessableEntity, helper.APIFailedResponse(
 			"Failed To Login",
 			http.StatusUnprocessableEntity,
-			gin.H{"errors": errorMessage},
+			errorMessage,
 		))
 		return
 	}
 
 	loggedInUser, err := h.service.LoginUser(input)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, helper.APIFailedResponse(
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
 			"Failed To Login",
-			http.StatusUnprocessableEntity,
+			http.StatusBadRequest,
 			gin.H{"errors": err.Error()},
 		))
 		return
@@ -84,7 +82,47 @@ func (h *userHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"Successfully Login",
 		http.StatusOK,
-		"Success",
 		formatter,
+	))
+}
+
+func (h *userHandler) IsEmailExist(c *gin.Context) {
+	var input user.IsEmailExistInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := helper.ErrorMessageResponse(errors)
+
+		c.JSON(http.StatusUnprocessableEntity, helper.APIFailedResponse(
+			"Email checking failed",
+			http.StatusUnprocessableEntity,
+			errorMessage,
+		))
+		return
+	}
+
+	isEmailValid, err := h.service.IsEmailExist(input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Email Checking Failed",
+			http.StatusBadRequest,
+			gin.H{"errors": "Internal Server Error"},
+		))
+	}
+
+	data := gin.H{
+		"is_available": isEmailValid,
+	}
+
+	metaMessage := "Email has been registered"
+	if isEmailValid {
+		metaMessage = "Email is available"
+	}
+
+	c.JSON(http.StatusOK, helper.APIResponse(
+		metaMessage,
+		http.StatusOK,
+		data,
 	))
 }

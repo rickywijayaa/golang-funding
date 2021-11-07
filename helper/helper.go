@@ -3,6 +3,7 @@ package helper
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -17,11 +18,11 @@ type Meta struct {
 	Success string `json:"success"`
 }
 
-func APIResponse(message string, code int, success string, data interface{}) Response {
+func APIResponse(message string, code int, data interface{}) Response {
 	meta := Meta{
 		Message: message,
 		Code:    code,
-		Success: success,
+		Success: "success",
 	}
 
 	jsonResponse := Response{
@@ -54,4 +55,8 @@ func FormatValidationError(err error) []string {
 	}
 
 	return errors
+}
+
+func ErrorMessageResponse(errors []string) map[string]interface{} {
+	return gin.H{"errors": errors}
 }
