@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"funding/auth"
 	"funding/helper"
 	"funding/user"
 	"net/http"
@@ -11,11 +12,12 @@ import (
 )
 
 type userHandler struct {
-	service user.Service
+	service     user.Service
+	AuthService auth.Service
 }
 
-func NewUserHandler(service user.Service) *userHandler {
-	return &userHandler{service}
+func NewUserHandler(service user.Service, authService auth.Service) *userHandler {
+	return &userHandler{service, authService}
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
@@ -44,7 +46,17 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	formatter := user.UserFormat(newUser, "token")
+	token, err := h.AuthService.GenerateToken(newUser.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed To Created Account",
+			http.StatusBadRequest,
+			gin.H{"errors": err.Error()},
+		))
+		return
+	}
+
+	formatter := user.UserFormat(newUser, token)
 
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"Your account has been created",
@@ -79,7 +91,16 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	formatter := user.UserFormat(loggedInUser, "token")
+	token, err := h.AuthService.GenerateToken(loggedInUser.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed To Login",
+			http.StatusBadRequest,
+			gin.H{"errors": err.Error()},
+		))
+		return
+	}
+	formatter := user.UserFormat(loggedInUser, token)
 
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"Successfully Login",
