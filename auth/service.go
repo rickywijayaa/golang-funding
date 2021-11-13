@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/base64"
+	"errors"
 	"funding/env"
 
 	"github.com/dgrijalva/jwt-go"
@@ -9,6 +10,7 @@ import (
 
 type Service interface {
 	GenerateToken(userID int) (string, error)
+	ValidateToken(encodedToken string) (*jwt.Token, error)
 }
 
 type jwtService struct {
@@ -30,4 +32,23 @@ func (s *jwtService) GenerateToken(userID int) (string, error) {
 	}
 
 	return signedToken, nil
+}
+
+func (s *jwtService) ValidateToken(encodedToken string) (*jwt.Token, error) {
+	token, err := jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
+		_, isValidAlogrithm := token.Method.(*jwt.SigningMethodHMAC)
+
+		if !isValidAlogrithm {
+			return nil, errors.New("Invalid Token")
+		}
+
+		hashJwt := base64.StdEncoding.EncodeToString([]byte(env.GetEnv("JWTSecret")))
+		return []byte(hashJwt), nil
+	})
+
+	if err != nil {
+		return token, err
+	}
+
+	return token, nil
 }
