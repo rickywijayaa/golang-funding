@@ -162,7 +162,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	userID := 1
+	currentUser := c.MustGet("current_user").(user.User)
+	userID := currentUser.ID
 
 	path := "images"
 	_, err = os.Stat(path)
