@@ -4,6 +4,7 @@ import (
 	auth "funding/auth"
 	env "funding/env"
 	"funding/handler"
+	"funding/middleware"
 	"funding/user"
 	"log"
 
@@ -29,7 +30,7 @@ func main() {
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email-checker", userHandler.IsEmailExist)
-	api.POST("/avatars", userHandler.UploadAvatar)
+	api.POST("/avatars", middleware.AuthMiddleware(userService, authService), userHandler.UploadAvatar)
 
 	router.Run()
 }
