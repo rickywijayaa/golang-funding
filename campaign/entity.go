@@ -5,7 +5,7 @@ import "time"
 type Campaign struct {
 	ID               int
 	UserID           int
-	Name             int
+	Name             string
 	ShortDescription string
 	Description      string
 	Perks            string
@@ -15,6 +15,7 @@ type Campaign struct {
 	Slug             string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	CampaignImages   []CampaignImage
 }
 
 type CampaignImage struct {

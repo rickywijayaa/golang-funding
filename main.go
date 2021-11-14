@@ -2,6 +2,7 @@ package main
 
 import (
 	auth "funding/auth"
+	"funding/campaign"
 	env "funding/env"
 	"funding/handler"
 	"funding/middleware"
@@ -20,10 +21,22 @@ func main() {
 	}
 
 	userRepository := user.NewRepository(db)
+	campaignRepository := campaign.NewRepository(db)
+
 	userService := user.NewService(userRepository)
 	authService := auth.NewJwtService()
 
 	userHandler := handler.NewUserHandler(userService, authService)
+
+	// campaign, _ := campaignRepository.FindByUserID(21)
+	// for _, value := range campaign {
+	// 	fmt.Println(value)
+	// 	if len(value.CampaignImages) > 0 {
+	// 		for _, img := range value.CampaignImages {
+	// 			fmt.Println(img)
+	// 		}
+	// 	}
+	// }
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
