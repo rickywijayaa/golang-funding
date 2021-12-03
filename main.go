@@ -24,19 +24,11 @@ func main() {
 	campaignRepository := campaign.NewRepository(db)
 
 	userService := user.NewService(userRepository)
+	campaignService := campaign.NewService(campaignRepository)
 	authService := auth.NewJwtService()
 
 	userHandler := handler.NewUserHandler(userService, authService)
-
-	// campaign, _ := campaignRepository.FindByUserID(21)
-	// for _, value := range campaign {
-	// 	fmt.Println(value)
-	// 	if len(value.CampaignImages) > 0 {
-	// 		for _, img := range value.CampaignImages {
-	// 			fmt.Println(img)
-	// 		}
-	// 	}
-	// }
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -44,6 +36,8 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email-checker", userHandler.IsEmailExist)
 	api.POST("/avatars", middleware.AuthMiddleware(userService, authService), userHandler.UploadAvatar)
+
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
 	router.Run()
 }
