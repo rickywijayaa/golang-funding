@@ -27,11 +27,14 @@ func (h *campaignHandler) GetCampaigns(c *gin.Context) {
 			http.StatusBadRequest,
 			nil,
 		))
+		return
 	}
+
+	formatter := campaign.CampaignsFormat(campaigns)
 
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"List of campaigns",
 		http.StatusOK,
-		campaigns,
+		formatter,
 	))
 }
