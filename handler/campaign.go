@@ -3,6 +3,7 @@ package handler
 import (
 	"funding/campaign"
 	"funding/helper"
+	"funding/user"
 	"net/http"
 	"strconv"
 
@@ -69,6 +70,44 @@ func (h *campaignHandler) GetCampaign(c *gin.Context) {
 
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"Success Get Detail Campaign",
+		http.StatusOK,
+		formatter,
+	))
+}
+
+func (h *campaignHandler) CreateCampaign(c *gin.Context) {
+	var input campaign.CreateCampaignInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := helper.ErrorMessageResponse(errors)
+
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed Create Campaign",
+			http.StatusBadRequest,
+			errorMessage,
+		))
+		return
+	}
+
+	currentUser := c.MustGet("current_user").(user.User)
+	input.User = currentUser
+
+	newCampaign, err := h.Service.CreateCampaign(input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed To Get Detail Campaign",
+			http.StatusBadRequest,
+			gin.H{"errors": err.Error()},
+		))
+		return
+	}
+
+	formatter := campaign.CampaignFormat(newCampaign)
+
+	c.JSON(http.StatusOK, helper.APIResponse(
+		"Success Create Campaign",
 		http.StatusOK,
 		formatter,
 	))

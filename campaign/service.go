@@ -54,7 +54,7 @@ func (s *service) GetCampaignByID(input GetCampaignDetailInput) (Campaign, error
 }
 
 func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
-	slugDefination := fmt.Sprintf("%s %s", input.Name, input.User.ID)
+	slugDefination := fmt.Sprintf("%s %d", input.Name, input.User.ID)
 
 	campaign := Campaign{
 		Name:             input.Name,
