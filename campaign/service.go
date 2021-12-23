@@ -3,6 +3,7 @@ package campaign
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/gosimple/slug"
 )
@@ -64,6 +65,13 @@ func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
 		GoalAmount:       input.GoalAmount,
 		UserID:           input.User.ID,
 		Slug:             slug.Make(slugDefination),
+	}
+
+	existingCampaign, _ := s.repository.FindByUserID(input.User.ID)
+	for _, exist := range existingCampaign {
+		if strings.TrimSpace(exist.Name) == strings.TrimSpace(input.Name) {
+			return Campaign{}, errors.New("Cant create a same campaign name")
+		}
 	}
 
 	newCampaign, err := s.repository.Save(campaign)
