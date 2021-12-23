@@ -44,7 +44,7 @@ func (s *service) GetCampaignByID(input GetCampaignDetailInput) (Campaign, error
 	campaign, err := s.repository.FindByID(input.ID)
 
 	if campaign.ID == 0 {
-		return campaign, errors.New("No Campaign Found Under This ID")
+		return campaign, errors.New("no campaign found under this ID")
 	}
 
 	if err != nil {
@@ -70,7 +70,7 @@ func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
 	existingCampaign, _ := s.repository.FindByUserID(input.User.ID)
 	for _, exist := range existingCampaign {
 		if strings.TrimSpace(exist.Name) == strings.TrimSpace(input.Name) {
-			return Campaign{}, errors.New("Cant create a same campaign name")
+			return Campaign{}, errors.New("cant create a same campaign name")
 		}
 	}
 
