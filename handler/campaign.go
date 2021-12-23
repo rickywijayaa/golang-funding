@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"funding/campaign"
 	"funding/helper"
 	"funding/user"
@@ -80,6 +81,7 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
+		fmt.Println(err)
 		errors := helper.FormatValidationError(err)
 		errorMessage := helper.ErrorMessageResponse(errors)
 
@@ -97,7 +99,7 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	newCampaign, err := h.Service.CreateCampaign(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
-			"Failed To Get Detail Campaign",
+			"Failed Create Campaign",
 			http.StatusBadRequest,
 			gin.H{"errors": err.Error()},
 		))

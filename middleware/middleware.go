@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"funding/auth"
 	"funding/helper"
 	"funding/user"
@@ -17,7 +16,6 @@ func AuthMiddleware(userService user.Service, jwtService auth.Service) gin.Handl
 		authHeader := c.GetHeader("Authorization")
 
 		if !strings.Contains(authHeader, "Bearer") {
-			fmt.Println("error 1")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, helper.APIFailedResponse(
 				"Unauthorized",
 				http.StatusUnauthorized,
