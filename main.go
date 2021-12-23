@@ -39,6 +39,7 @@ func main() {
 	api.POST("/avatars", middleware.AuthMiddleware(userService, authService), userHandler.UploadAvatar)
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
+	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 
 	router.Run()
 }
