@@ -19,6 +19,7 @@ func (r *repository) FindByCampaignID(campaignID int) ([]Transaction, error) {
 
 	err := r.db.Preload("User").
 		Where("campaign_id = ?", campaignID).
+		Order("created_at desc").
 		Find(&transaction).Error
 
 	if err != nil {

@@ -3,6 +3,7 @@ package handler
 import (
 	"funding/helper"
 	"funding/transaction"
+	"funding/user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,7 @@ func NewTransactionHandler(service transaction.Service) *transactionHandler {
 func (h *transactionHandler) GetCampaignsTransaction(c *gin.Context) {
 	var input transaction.GetTransactionsByCampaignIdInput
 
-	err := c.ShouldBindUri(input.ID)
+	err := c.ShouldBindUri(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := helper.ErrorMessageResponse(errors)
@@ -32,7 +33,10 @@ func (h *transactionHandler) GetCampaignsTransaction(c *gin.Context) {
 		return
 	}
 
-	transaction, err := h.Service.GetTransactionsByCampaignID(input)
+	currentUser := c.MustGet("current_user").(user.User)
+	input.User = currentUser
+
+	transactions, err := h.Service.GetTransactionsByCampaignID(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
 			"Failed to get campaigns transaction",
@@ -42,10 +46,10 @@ func (h *transactionHandler) GetCampaignsTransaction(c *gin.Context) {
 		return
 	}
 
-	formatter := transaction
+	formatter := transaction.CampaignTransactionsFormat(transactions)
 
 	c.JSON(http.StatusOK, helper.APIResponse(
-		"List of campaigns",
+		"List of campaigns transactions",
 		http.StatusOK,
 		formatter,
 	))
