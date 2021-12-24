@@ -28,13 +28,16 @@ func main() {
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
 	authService := auth.NewJwtService()
+	transactionService := transaction.NewService(transactionRepository)
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
 	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
+
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email-checker", userHandler.IsEmailExist)
@@ -45,6 +48,8 @@ func main() {
 	api.POST("/campaigns", middleware.AuthMiddleware(userService, authService), campaignHandler.CreateCampaign)
 	api.PUT("/campaigns/:id", middleware.AuthMiddleware(userService, authService), campaignHandler.UpdateCampaign)
 	api.POST("/campaigns-images", middleware.AuthMiddleware(userService, authService), campaignHandler.UploadImage)
+
+	api.GET("/campaign/:id/transactions", transactionHandler.GetCampaignsTransaction)
 
 	router.Run()
 }
