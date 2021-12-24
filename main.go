@@ -6,6 +6,7 @@ import (
 	env "funding/env"
 	"funding/handler"
 	"funding/middleware"
+	"funding/transaction"
 	"funding/user"
 	"log"
 
@@ -22,6 +23,7 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
+	transactionRepository := transaction.NewRepository(db)
 
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
