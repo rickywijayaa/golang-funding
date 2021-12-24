@@ -12,6 +12,7 @@ type Service interface {
 	GetCampaigns(UserID int) ([]Campaign, error)
 	GetCampaignByID(input GetCampaignDetailInput) (Campaign, error)
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
+	UpdateCampaign(id GetCampaignDetailInput, input CreateCampaignInput) (Campaign, error)
 }
 
 type service struct {
@@ -80,4 +81,27 @@ func (s *service) CreateCampaign(input CreateCampaignInput) (Campaign, error) {
 	}
 
 	return newCampaign, nil
+}
+
+func (s *service) UpdateCampaign(id GetCampaignDetailInput, input CreateCampaignInput) (Campaign, error) {
+	campaign, err := s.repository.FindByID(id.ID)
+	if err != nil {
+		return campaign, err
+	}
+
+	slugDefination := fmt.Sprintf("%s %d", input.Name, input.User.ID)
+
+	campaign.Name = input.Name
+	campaign.ShortDescription = input.ShortDescription
+	campaign.Description = input.Description
+	campaign.Perks = input.Perks
+	campaign.GoalAmount = input.GoalAmount
+	campaign.Slug = slug.Make(slugDefination)
+
+	updatedCampaign, err := s.repository.Update(campaign)
+	if err != nil {
+		return updatedCampaign, err
+	}
+
+	return updatedCampaign, nil
 }
