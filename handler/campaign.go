@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"funding/campaign"
 	"funding/helper"
 	"funding/user"
@@ -81,7 +80,6 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		fmt.Println(err)
 		errors := helper.FormatValidationError(err)
 		errorMessage := helper.ErrorMessageResponse(errors)
 
@@ -132,10 +130,11 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 	}
 
 	var input campaign.CreateCampaignInput
+	currentUser := c.MustGet("current_user").(user.User)
+	input.User = currentUser
 
 	err = c.ShouldBindJSON(&input)
 	if err != nil {
-		fmt.Println(err)
 		errors := helper.FormatValidationError(err)
 		errorMessage := helper.ErrorMessageResponse(errors)
 

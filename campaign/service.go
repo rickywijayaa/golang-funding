@@ -89,6 +89,10 @@ func (s *service) UpdateCampaign(id GetCampaignDetailInput, input CreateCampaign
 		return campaign, err
 	}
 
+	if campaign.UserID != input.User.ID {
+		return campaign, errors.New("failed to update campaign , due not owning this campaign")
+	}
+
 	slugDefination := fmt.Sprintf("%s %d", input.Name, input.User.ID)
 
 	campaign.Name = input.Name
