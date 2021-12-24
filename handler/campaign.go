@@ -169,8 +169,8 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 
 func (h *campaignHandler) UploadImage(c *gin.Context) {
 	var input campaign.CreateCampaignImageInput
-
 	err := c.ShouldBind(&input)
+
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := helper.ErrorMessageResponse(errors)
@@ -193,7 +193,7 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 		return
 	}
 
-	currentUser := c.MustGet("currentUser").(user.User)
+	currentUser := c.MustGet("current_user").(user.User)
 	userID := currentUser.ID
 
 	path := "images"
@@ -228,5 +228,4 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 		http.StatusOK,
 		gin.H{"is_uploaded": true},
 	))
-
 }
