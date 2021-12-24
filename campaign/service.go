@@ -112,6 +112,15 @@ func (s *service) UpdateCampaign(id GetCampaignDetailInput, input CreateCampaign
 }
 
 func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error) {
+	campaign, err := s.repository.FindByID(input.CampaignID)
+	if err != nil {
+		return CampaignImage{}, err
+	}
+
+	if campaign.UserID != input.User.ID {
+		return CampaignImage{}, errors.New("failed to update campaign , due not owning this campaign")
+	}
+
 	isPrimary := 0
 	if *input.IsPrimary {
 		isPrimary = 1

@@ -186,7 +186,7 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
-			"Failed to upload avatar image",
+			"Failed to upload campaign image",
 			http.StatusBadRequest,
 			gin.H{"is_uploaded": false},
 		))
@@ -195,6 +195,7 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 
 	currentUser := c.MustGet("current_user").(user.User)
 	userID := currentUser.ID
+	input.User = currentUser
 
 	path := "images"
 	_, err = os.Stat(path)
@@ -216,7 +217,7 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 	_, err = h.Service.SaveCampaignImage(input, path)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
-			"Failed to upload campaign image",
+			"Failed to upload campaign image due not owning this campaign",
 			http.StatusBadRequest,
 			gin.H{"is_uploaded": false},
 		))
