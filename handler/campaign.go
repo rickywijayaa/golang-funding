@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"funding/campaign"
 	"funding/helper"
 	"funding/user"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -163,4 +165,68 @@ func (h *campaignHandler) UpdateCampaign(c *gin.Context) {
 		http.StatusOK,
 		formatter,
 	))
+}
+
+func (h *campaignHandler) UploadImage(c *gin.Context) {
+	var input campaign.CreateCampaignImageInput
+
+	err := c.ShouldBind(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := helper.ErrorMessageResponse(errors)
+
+		c.JSON(http.StatusUnprocessableEntity, helper.APIFailedResponse(
+			"Failed to upload campaign image",
+			http.StatusUnprocessableEntity,
+			errorMessage,
+		))
+		return
+	}
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed to upload avatar image",
+			http.StatusBadRequest,
+			gin.H{"is_uploaded": false},
+		))
+		return
+	}
+
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
+
+	path := "images"
+	_, err = os.Stat(path)
+	if os.IsNotExist(err) {
+		os.Mkdir(path, os.ModePerm)
+	}
+
+	path = fmt.Sprintf("images/%d-%s", userID, file.Filename)
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed to upload campaign image",
+			http.StatusBadRequest,
+			gin.H{"is_uploaded": false},
+		))
+		return
+	}
+
+	_, err = h.Service.SaveCampaignImage(input, path)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed to upload campaign image",
+			http.StatusBadRequest,
+			gin.H{"is_uploaded": false},
+		))
+		return
+	}
+
+	c.JSON(http.StatusOK, helper.APIResponse(
+		"Success upload campaign image",
+		http.StatusOK,
+		gin.H{"is_uploaded": true},
+	))
+
 }
