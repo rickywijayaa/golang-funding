@@ -44,4 +44,6 @@ func main() {
 	api.PUT("/campaigns/:id", middleware.AuthMiddleware(userService, authService), campaignHandler.UpdateCampaign)
 
 	router.Run()
+
+	//test commit
 }
