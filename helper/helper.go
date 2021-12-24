@@ -22,7 +22,7 @@ func APIResponse(message string, code int, data interface{}) Response {
 	meta := Meta{
 		Message: message,
 		Code:    code,
-		Success: "success",
+		Success: "Success",
 	}
 
 	jsonResponse := Response{
@@ -37,7 +37,7 @@ func APIFailedResponse(message string, code int, data interface{}) Response {
 	meta := Meta{
 		Message: message,
 		Code:    code,
-		Success: "failed",
+		Success: "Failed",
 	}
 
 	jsonResponse := Response{
