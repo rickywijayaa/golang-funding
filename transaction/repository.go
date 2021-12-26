@@ -35,6 +35,7 @@ func (r *repository) FindByUserID(userID int) ([]Transaction, error) {
 
 	err := r.db.Preload("Campaign.CampaignImages", "is_primary = 1").
 		Where("user_id = ?", userID).
+		Order("id desc").
 		Find(&transactions).Error
 
 	if err != nil {
