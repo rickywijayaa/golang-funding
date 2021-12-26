@@ -69,7 +69,7 @@ func (h *transactionHandler) GetUserTransactions(c *gin.Context) {
 		return
 	}
 
-	formatter := transactions
+	formatter := transaction.UserTransactionsFormat(transactions)
 
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"List of transactions",
