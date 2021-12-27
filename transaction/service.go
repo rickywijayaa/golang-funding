@@ -59,12 +59,12 @@ func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, 
 		Status:     "PENDING",
 	}
 
-	isAnyTransactions, err := s.repository.FindByCampaignID(input.CampaignID)
+	isAnyTransactions, err := s.repository.FindOneTransaction()
 	if err != nil {
 		return Transaction{}, err
 	}
 
-	if len(isAnyTransactions) > 0 {
+	if isAnyTransactions.ID != 0 {
 		lastOrderID, err := s.repository.FindLastOrderID()
 
 		if err != nil {

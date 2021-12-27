@@ -9,6 +9,7 @@ type Repository interface {
 	FindByUserID(userID int) ([]Transaction, error)
 	Save(transaction Transaction) (Transaction, error)
 	FindLastOrderID() (Transaction, error)
+	FindOneTransaction() (Transaction, error)
 }
 
 type repository struct {
@@ -69,4 +70,14 @@ func (r *repository) FindLastOrderID() (Transaction, error) {
 
 	return transaction, nil
 
+}
+
+func (r *repository) FindOneTransaction() (Transaction, error) {
+	var transaction Transaction
+	err := r.db.Limit(1).Find(&transaction).Error
+	if err != nil {
+		return transaction, err
+	}
+
+	return transaction, nil
 }

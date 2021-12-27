@@ -34,16 +34,6 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
-	user, _ := userService.GetUserByID(29)
-
-	input := transaction.CreateTransactionInput{
-		Amount:     1000000,
-		CampaignID: 5,
-		User:       user,
-	}
-
-	transactionService.CreateTransaction(input)
-
 	router := gin.Default()
 	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
@@ -61,6 +51,7 @@ func main() {
 
 	api.GET("/campaign/:id/transactions", middleware.AuthMiddleware(userService, authService), transactionHandler.GetCampaignsTransaction)
 	api.GET("/transactions", middleware.AuthMiddleware(userService, authService), transactionHandler.GetUserTransactions)
+	api.POST("/transactions", middleware.AuthMiddleware(userService, authService), transactionHandler.CreateTransaction)
 
 	router.Run()
 }
