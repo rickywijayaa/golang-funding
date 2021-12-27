@@ -59,17 +59,25 @@ func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, 
 		Status:     "PENDING",
 	}
 
-	lastOrderID, err := s.repository.FindLastOrderID()
+	isAnyTransactions, err := s.repository.FindByCampaignID(input.CampaignID)
 	if err != nil {
-		return lastOrderID, err
+		return Transaction{}, err
 	}
 
-	if lastOrderID.ID == 0 || lastOrderID.Code == "" {
-		transaction.Code = "ORDER-1"
+	if len(isAnyTransactions) > 0 {
+		lastOrderID, err := s.repository.FindLastOrderID()
+
+		if err != nil {
+			return lastOrderID, err
+		}
+
+		if lastOrderID.ID != 0 && lastOrderID.Code != "" {
+			lastOrderNumber := strings.Split(lastOrderID.Code, "-")
+			resultOrderNumberToInt, _ := strconv.Atoi(lastOrderNumber[1])
+			transaction.Code = fmt.Sprintf("ORDER-%v", resultOrderNumberToInt+1)
+		}
 	} else {
-		lastOrderNumber := strings.Split(lastOrderID.Code, "-")
-		resultOrderNumberToInt, _ := strconv.Atoi(lastOrderNumber[1])
-		transaction.Code = fmt.Sprintf("ORDER-%v", resultOrderNumberToInt+1)
+		transaction.Code = "ORDER-1"
 	}
 
 	newTransaction, err := s.repository.Save(transaction)
