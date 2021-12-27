@@ -2,7 +2,10 @@ package transaction
 
 import (
 	"errors"
+	"fmt"
 	"funding/campaign"
+	"strconv"
+	"strings"
 )
 
 type service struct {
@@ -13,6 +16,7 @@ type service struct {
 type Service interface {
 	GetTransactionsByCampaignID(input GetTransactionsByCampaignIdInput) ([]Transaction, error)
 	GetTransactionsByUserID(userID int) ([]Transaction, error)
+	CreateTransaction(input CreateTransactionInput) (Transaction, error)
 }
 
 func NewService(repository Repository, campaignRepository campaign.Repository) *service {
@@ -45,4 +49,33 @@ func (s *service) GetTransactionsByUserID(userID int) ([]Transaction, error) {
 	}
 
 	return transactions, nil
+}
+
+func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, error) {
+	transaction := Transaction{
+		Amount:     input.Amount,
+		CampaignID: input.CampaignID,
+		UserID:     input.User.ID,
+		Status:     "PENDING",
+	}
+
+	lastOrderID, err := s.repository.FindLastOrderID()
+	if err != nil {
+		return lastOrderID, err
+	}
+
+	if lastOrderID.ID == 0 || lastOrderID.Code == "" {
+		transaction.Code = "ORDER-1"
+	} else {
+		lastOrderNumber := strings.Split(lastOrderID.Code, "-")
+		resultOrderNumberToInt, _ := strconv.Atoi(lastOrderNumber[1])
+		transaction.Code = fmt.Sprintf("ORDER-%v", resultOrderNumberToInt+1)
+	}
+
+	newTransaction, err := s.repository.Save(transaction)
+	if err != nil {
+		return newTransaction, err
+	}
+
+	return newTransaction, nil
 }
