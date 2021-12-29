@@ -6,7 +6,6 @@ import (
 	env "funding/env"
 	"funding/handler"
 	"funding/middleware"
-	"funding/payment"
 	"funding/transaction"
 	"funding/user"
 	"log"
@@ -29,9 +28,7 @@ func main() {
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
 	authService := auth.NewJwtService()
-	paymentService := payment.NewService()
-
-	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
+	transactionService := transaction.NewService(transactionRepository, campaignRepository)
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)

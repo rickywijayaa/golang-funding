@@ -97,7 +97,7 @@ func (h *transactionHandler) CreateTransaction(c *gin.Context) {
 	currentUser := c.MustGet("current_user").(user.User)
 	input.User = currentUser
 
-	transactions, err := h.Service.CreateTransaction(input)
+	transaction, err := h.Service.CreateTransaction(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
 			"Failed To Create Transaction",
@@ -107,7 +107,7 @@ func (h *transactionHandler) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	formatter := transaction.TransactionFormat(transactions)
+	formatter := transaction
 
 	c.JSON(http.StatusOK, helper.APIResponse(
 		"Success Create Transaction",
