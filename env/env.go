@@ -12,7 +12,7 @@ func Dsn() string {
 	// return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", GetDBUser(),
 	// 	GetDBPassword(), GetDBUrl(), GetDBName())
 	return fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai",
-		GetDBUrl(), GetDBUser(), GetDBPassword(), GetDBPort(), GetDBName())
+		GetDBHost(), GetDBUser(), GetDBPassword(), GetDBPort(), GetDBName())
 }
 
 func GetEnv(key string) string {
@@ -33,8 +33,8 @@ func GetDBPassword() string {
 	return GetEnv("DB_PASSWORD")
 }
 
-func GetDBUrl() string {
-	return GetEnv("DB_URL")
+func GetDBHost() string {
+	return GetEnv("DB_HOST")
 }
 
 func GetDBName() string {
