@@ -34,7 +34,7 @@ func main() {
 
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
-	transactionHandler := handler.NewTransactionHandler(transactionService)
+	transactionHandler := handler.NewTransactionHandler(transactionService, paymentService)
 
 	router := gin.Default()
 	router.Static("/images", "./images")
@@ -54,6 +54,7 @@ func main() {
 	api.GET("/campaign/:id/transactions", middleware.AuthMiddleware(userService, authService), transactionHandler.GetCampaignsTransaction)
 	api.GET("/transactions", middleware.AuthMiddleware(userService, authService), transactionHandler.GetUserTransactions)
 	api.POST("/transactions", middleware.AuthMiddleware(userService, authService), transactionHandler.CreateTransaction)
+	api.POST("/transactions/notification", transactionHandler.GetNotification)
 
 	router.Run()
 }

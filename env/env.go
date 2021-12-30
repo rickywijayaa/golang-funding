@@ -38,3 +38,11 @@ func GetDBUrl() string {
 func GetDBName() string {
 	return GetEnv("DB_NAME")
 }
+
+func GetClientKey() string {
+	return GetEnv("ClientKey")
+}
+
+func GetServerKey() string {
+	return GetEnv("ServerKey")
+}

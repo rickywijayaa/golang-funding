@@ -2,6 +2,7 @@ package handler
 
 import (
 	"funding/helper"
+	"funding/payment"
 	"funding/transaction"
 	"funding/user"
 	"net/http"
@@ -10,11 +11,12 @@ import (
 )
 
 type transactionHandler struct {
-	Service transaction.Service
+	Service        transaction.Service
+	PaymentService payment.Service
 }
 
-func NewTransactionHandler(service transaction.Service) *transactionHandler {
-	return &transactionHandler{service}
+func NewTransactionHandler(service transaction.Service, paymentService payment.Service) *transactionHandler {
+	return &transactionHandler{service, paymentService}
 }
 
 func (h *transactionHandler) GetCampaignsTransaction(c *gin.Context) {
@@ -114,4 +116,33 @@ func (h *transactionHandler) CreateTransaction(c *gin.Context) {
 		http.StatusOK,
 		formatter,
 	))
+}
+
+func (h *transactionHandler) GetNotification(c *gin.Context) {
+	var input transaction.TransactionNotificationInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := helper.ErrorMessageResponse(errors)
+
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed To Process Notification",
+			http.StatusBadRequest,
+			errorMessage,
+		))
+		return
+	}
+
+	err = h.Service.ProcessPayment(input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helper.APIFailedResponse(
+			"Failed To Process Notification",
+			http.StatusBadRequest,
+			nil,
+		))
+		return
+	}
+
+	c.JSON(http.StatusOK, input)
 }
