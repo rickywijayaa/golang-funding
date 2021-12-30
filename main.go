@@ -13,12 +13,12 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func main() {
-	db, err := gorm.Open(mysql.Open(env.Dsn()), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(env.Dsn()), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
