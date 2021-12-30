@@ -11,7 +11,7 @@ import (
 func Dsn() string {
 	// return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", GetDBUser(),
 	// 	GetDBPassword(), GetDBUrl(), GetDBName())
-	return fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai",
+	return fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=require TimeZone=Asia/Shanghai",
 		GetDBHost(), GetDBUser(), GetDBPassword(), GetDBPort(), GetDBName())
 }
 
