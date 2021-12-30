@@ -3,7 +3,7 @@ package main
 import (
 	auth "funding/auth"
 	"funding/campaign"
-	env "funding/env"
+	"funding/env"
 	"funding/handler"
 	"funding/middleware"
 	"funding/payment"
@@ -19,6 +19,7 @@ import (
 
 func main() {
 	db, err := gorm.Open(postgres.Open(env.Dsn()), &gorm.Config{})
+	// db, err := gorm.Open(mysql.Open(env.Dsn()), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}

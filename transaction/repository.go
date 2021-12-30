@@ -95,7 +95,7 @@ func (r *repository) Update(transaction Transaction) (Transaction, error) {
 
 func (r *repository) FindByOrderID(orderID string) (Transaction, error) {
 	var transaction Transaction
-	err := r.db.Where("order_id = ?", orderID).Find(&transaction).Error
+	err := r.db.Where("code = ?", orderID).Find(&transaction).Error
 
 	if err != nil {
 		return transaction, err
