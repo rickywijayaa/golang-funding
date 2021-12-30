@@ -117,6 +117,8 @@ func (s *service) ProcessPayment(input TransactionNotificationInput) error {
 		return err
 	}
 
+	fmt.Println(input)
+
 	if input.PaymentType == "credit_card" && input.TransactionStatus == "capture" && input.FraudStatus == "accept" {
 		transaction.Status = "PAID"
 	} else if input.TransactionStatus == "settlement" {

@@ -13,6 +13,8 @@ func Dsn() string {
 	// 	GetDBPassword(), GetDBUrl(), GetDBName())
 	return fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=require TimeZone=Asia/Shanghai",
 		GetDBHost(), GetDBUser(), GetDBPassword(), GetDBPort(), GetDBName())
+	// return fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai",
+	// 	GetDBHost(), GetDBUser(), GetDBPassword(), GetDBPort(), GetDBName())
 }
 
 func GetEnv(key string) string {
