@@ -1,1 +1,1 @@
-web: golang-funding
+web: funding
