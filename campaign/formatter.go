@@ -107,6 +107,7 @@ func CampaignDetailFormat(campaign Campaign) CampaignDetailFormatter {
 		GoalAmount:       campaign.GoalAmount,
 		CurrentAmount:    campaign.CurrentAmount,
 		BackerCount:      campaign.BackerCount,
+		UserID:           user.ID,
 		Slug:             campaign.Slug,
 		Perks:            perks,
 		User:             campaignUserFormatter,
